@@ -45,6 +45,7 @@ export class UtilsFile {
       ? this.capConfig.plugins.CapacitorSQLite.electronIsEncryption
       : false;
     this.osType = this.Os.type();
+
     switch (this.osType) {
       case 'Darwin':
         this.pathDB = this.capConfig.plugins.CapacitorSQLite.electronMacLocation
@@ -64,6 +65,10 @@ export class UtilsFile {
       default:
         console.log('other operating system');
     }
+
+    this.pathDB = this.pathDB.replace('<homeDir>', this.HomeDir);
+    this.pathDB = this.pathDB.replace('<appId>', this.capConfig.appId);
+    console.log('==== this.pathDB', this.pathDB);
   }
   /**
    * Get isEncryption from config
@@ -135,11 +140,8 @@ export class UtilsFile {
     const dbFolder: string = this.pathDB;
     if (dbFolder.includes(sep)) {
       retPath = dbFolder;
-      if (this.Path.basename(dbFolder) !== this.AppName) {
-        retPath = this.Path.join(dbFolder, this.AppName);
-      }
     } else {
-      retPath = this.Path.join(this.HomeDir, dbFolder, this.AppName);
+      retPath = this.Path.join(this.HomeDir, dbFolder, this.capConfig.appId);
     }
     const retB: boolean = this._createFolderIfNotExists(retPath);
     if (!retB) retPath = '';
